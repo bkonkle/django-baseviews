@@ -32,7 +32,7 @@ The simplest views can be handled by creating a subclass of ``BasicView``,
 defining the ``template`` attribute, and implementing the ``get_context``
 method. ::
     
-    from baseviews import BaseView
+    from baseviews import BasicView
     from lol.models import Cheezburger
     
     class LolHome(BasicView):
