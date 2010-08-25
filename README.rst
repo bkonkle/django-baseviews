@@ -115,19 +115,22 @@ request method is POST it will attempt to validate and save it.
 If you would like to do more, you can extend the ``get_form`` and
 ``process_form`` methods::
 
-    def get_form(self):
-        self.form_options = {'request': self.request, 'kitteh': self.kitteh}
-        return super(KittehView, self).get_form()
-    
-    def process_form(self):
-        if self.request.POST.get('edit', False):
-            if self.form.is_valid():
-                self.form.save()
-                return redirect('kitteh_edited',
-                                slug=self.kitteh.slug)
-        elif self.request.POST.get('delete', False):
-            self.kitteh.delete()
-            return redirect('kitteh_deleted')
+    class KittehView(FormView):
+        form_class = KittehForm
+        
+        def get_form(self):
+            self.form_options = {'request': self.request, 'kitteh': self.kitteh}
+            return super(KittehView, self).get_form()
+        
+        def process_form(self):
+            if self.request.POST.get('edit', False):
+                if self.form.is_valid():
+                    self.form.save()
+                    return redirect('kitteh_edited',
+                                    slug=self.kitteh.slug)
+            elif self.request.POST.get('delete', False):
+                self.kitteh.delete()
+                return redirect('kitteh_deleted')
 
 Mapping the Views to URLs
 *************************
