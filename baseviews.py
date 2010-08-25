@@ -51,7 +51,7 @@ class BasicView(object):
         """
         cache_key = self.get_cache_key()
         context_dict = cache_key and cache.get(cache_key)
-        if not context_dict:
+        if context_dict is None:
             context_dict = self.cached_context()
             if cache_key:
                 cache.set(cache_key, context_dict, self.cache_time)
