@@ -14,7 +14,6 @@ class BasicView(object):
     def __call__(self, request):
         """Handle the request processing workflow."""
         self.request = request
-        self.context = self.get_context()
         return self.render()
     
     def get_cache_key(self):
@@ -36,6 +35,7 @@ class BasicView(object):
             self.uncached_context()
         )
         return context_dict
+    context = property(get_context)
     
     def cached_context(self):
         """Provide the context that can be cached."""
@@ -53,8 +53,7 @@ class BasicView(object):
     
     def render(self):
         """Take the context and render it using the template."""
-        template = self.get_template()
-        return render_to_response(template, self.context,
+        return render_to_response(self.get_template(), self.context,
                                   RequestContext(self.request))
 
 class AjaxView(BasicView):
@@ -82,7 +81,6 @@ class FormView(BasicView):
             if response:
                 return response
         
-        self.context = self.get_context()
         return self.render()
     
     def uncached_context(self):
