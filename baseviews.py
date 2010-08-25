@@ -1,11 +1,10 @@
 from django.conf import settings
 from django.core.cache import cache
-from django.core.serializers import serialize, json
-from django.db.models.query import QuerySet
+from django.core.serializers.json import DjangoJSONEncoder
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.utils import simplejson
 from django.shortcuts import render_to_response
-from django.template import RequestContext, loader
+from django.template import RequestContext
 
 def view_factory(view_class, *args, **kwargs):
     """
@@ -74,7 +73,7 @@ class AjaxView(BasicView):
         return super(AjaxView, self).__call__(request)
     
     def render(self):
-        json_data = simplejson.dumps(self.context, cls=json.DjangoJSONEncoder)
+        json_data = simplejson.dumps(self.context, cls=DjangoJSONEncoder)
         return HttpResponse(json_data, content_type='application/json')
 
 class FormView(BasicView):
