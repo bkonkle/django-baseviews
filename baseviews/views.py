@@ -32,8 +32,7 @@ class BasicView(object):
             context_dict = cache.get(cache_key)
             if context_dict is None:
                 context_dict = self.cached_context()
-                if not cache_key is None:
-                    cache.set(cache_key, context_dict, self.cache_time)
+                cache.set(cache_key, context_dict, self.cache_time)
         context_dict.update(
             self.uncached_context()
         )
