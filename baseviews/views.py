@@ -26,10 +26,10 @@ class BasicView(object):
         generate it and cache it.
         """
         cache_key = self.get_cache_key()
-        context_dict = cache_key and cache.get(cache_key)
+        context_dict = not cache_key is None and cache.get(cache_key)
         if context_dict is None:
             context_dict = self.cached_context()
-            if cache_key:
+            if not cache_key is None:
                 cache.set(cache_key, context_dict, self.cache_time)
         context_dict.update(
             self.uncached_context()
