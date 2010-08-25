@@ -74,6 +74,35 @@ populate by overriding the ``get_cache_key`` method::
         def get_cache_key(self):
             return self.cache_key % self.lol.slug
 
+Ajax Views
+----------
+
+The ``AjaxView`` class is a subclass of ``BasicView`` that takes the context
+and uses simplejson to dump it to a JSON object.  If the view is not requested
+via Ajax, it raises an Http404 exception.
+
+Decorators
+----------
+
+Built-in decorators such as login_required don't work by default with
+class-based views.  This is because the first argument passed to the decorator
+is the class instance, not the request object.  Todd Reed posted an excellent
+solution to this problem on
+`his blog <http://www.toddreed.name/content/django-view-class/>`__.
+
+I've added his solution to ``baseviews`` as ``decorate``.  To decorate a
+class-view method, use ``decorate`` like this::
+
+    from django.contrib.auth.decorators import login_required
+    from baseviews import decorate, BasicView
+    
+    class BucketFinder(BasicView):
+        template = 'lol/wheres_mah_bucket.html'
+        
+        @decorate(login_required)
+        def __call__(self, request):
+            return super(BucketFinder, self).__call__(request)
+
 Form Views
 ----------
 
