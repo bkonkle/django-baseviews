@@ -1,35 +1,11 @@
 from django.conf import settings
 from django.core.cache import cache
-from django.core.serializers import serialize, json
-from django.db.models.query import QuerySet
+from django.core.serializers.json import DjangoJSONEncoder
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.utils import simplejson
 from django.shortcuts import render_to_response
-from django.template import RequestContext, loader
+from django.template import RequestContext
 
-def view_factory(view_class, *args, **kwargs):
-    """
-    Thread-safe view class creator that instantiates view classes on demand
-    so that attributes can safely be used.
-    """
-    def view(request, *vargs, **vkwargs):
-        return view_class(*args, **kwargs)(request, *vargs, **vkwargs)
-    return view
-
-def decorate(function_decorator):
-    """
-    A decorator to allow the use of decorators that were created for
-    function-based views.  It calls the decorator without the 'self' argument,
-    and then takes the function that the decorator returns and calls it with
-    the 'self' argument included.
-    """
-    def decorate_method(unbound_method):
-        def method_proxy(self, *args, **kwargs):
-            def f(*a, **kw):
-                return unbound_method(self, *a, **kw)
-            return function_decorator(f)(*args, **kwargs)
-        return method_proxy
-    return decorate_method
 
 class BasicView(object):
     cache_key = None # Leave as none to disable context caching
@@ -38,7 +14,6 @@ class BasicView(object):
     def __call__(self, request):
         """Handle the request processing workflow."""
         self.request = request
-        self.context = self.get_context()
         return self.render()
     
     def get_cache_key(self):
@@ -51,15 +26,18 @@ class BasicView(object):
         generate it and cache it.
         """
         cache_key = self.get_cache_key()
-        context_dict = cache_key and cache.get(cache_key)
-        if not context_dict:
+        if cache_key is None:
             context_dict = self.cached_context()
-            if cache_key:
+        else:
+            context_dict = cache.get(cache_key)
+            if context_dict is None:
+                context_dict = self.cached_context()
                 cache.set(cache_key, context_dict, self.cache_time)
         context_dict.update(
             self.uncached_context()
         )
         return context_dict
+    context = property(get_context)
     
     def cached_context(self):
         """Provide the context that can be cached."""
@@ -77,8 +55,7 @@ class BasicView(object):
     
     def render(self):
         """Take the context and render it using the template."""
-        template = self.get_template()
-        return render_to_response(template, self.context,
+        return render_to_response(self.get_template(), self.context,
                                   RequestContext(self.request))
 
 class AjaxView(BasicView):
@@ -89,7 +66,7 @@ class AjaxView(BasicView):
         return super(AjaxView, self).__call__(request)
     
     def render(self):
-        json_data = simplejson.dumps(self.context, cls=json.DjangoJSONEncoder)
+        json_data = simplejson.dumps(self.context, cls=DjangoJSONEncoder)
         return HttpResponse(json_data, content_type='application/json')
 
 class FormView(BasicView):
@@ -106,7 +83,6 @@ class FormView(BasicView):
             if response:
                 return response
         
-        self.context = self.get_context()
         return self.render()
     
     def uncached_context(self):
@@ -134,6 +110,11 @@ class FormView(BasicView):
         data = getattr(self.request, 'POST', None)
         if data:
             self.form_options.update({'data': data})
+        
+        files = getattr(self.request, 'FILES', None)
+        if files:
+            self.form_options.update({'files': files})
+        
         return self.form_class(**self.form_options)
     
     def get_success_url(self):

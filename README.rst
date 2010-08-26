@@ -32,7 +32,7 @@ The simplest views can be handled by creating a subclass of ``BasicView``,
 defining the ``template`` attribute, and implementing the ``get_context``
 method. ::
     
-    from baseviews import BaseView
+    from baseviews import BasicView
     from lol.models import Cheezburger
     
     class LolHome(BasicView):
@@ -108,26 +108,39 @@ Form Views
 
 Form processing can be simplified with a subclass of the ``FormView`` class.
 Define an extra attribute called ``form_class`` and set it to the form you'd
-like to use.  The most basic processing can be handled without any further
-effort.  ``FormView`` will get the form and add it to the context, and if the
-request method is POST it will attempt to validate and save it.
+like to use, and define an attribute called ``success_url`` with the name of
+the url to be redirected to after successful form processing.  You can also
+override the ``get_success_url`` method to provide a dynamic success url.
+
+The most basic processing can be handled without any further effort.
+``FormView`` will get the form and add it to the context, and if the request
+method is POST it will attempt to validate and save it.
 
 If you would like to do more, you can extend the ``get_form`` and
 ``process_form`` methods::
 
-    def get_form(self):
-        self.form_options = {'request': self.request, 'kitteh': self.kitteh}
-        return super(KittehView, self).get_form()
-    
-    def process_form(self):
-        if self.request.POST.get('edit', False):
-            if self.form.is_valid():
-                self.form.save()
-                return redirect('kitteh_edited',
-                                slug=self.kitteh.slug)
-        elif self.request.POST.get('delete', False):
-            self.kitteh.delete()
-            return redirect('kitteh_deleted')
+    class KittehView(FormView):
+        form_class = KittehForm
+        
+        def __call__(self, request, kitteh_slug):
+            self.kitteh = get_object_or_404(Kitteh, slug=kitteh_slug)
+            return super(KittehView, self).__call__(request)
+        
+        def get_form(self):
+            self.form_options = {'request': self.request, 'kitteh': self.kitteh}
+            return super(KittehView, self).get_form()
+        
+        def process_form(self):
+            if self.request.POST.get('edit', False):
+                if self.form.is_valid():
+                    self.form.save()
+                    return redirect(self.get_success_url())
+            elif self.request.POST.get('delete', False):
+                self.kitteh.delete()
+                return redirect('kitteh_deleted')
+        
+        def get_success_url(self):
+            return reverse('kitteh_edited', args=[self.kitteh.slug])
 
 Mapping the Views to URLs
 *************************
