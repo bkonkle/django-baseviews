@@ -110,6 +110,11 @@ class FormView(BasicView):
         data = getattr(self.request, 'POST', None)
         if data:
             self.form_options.update({'data': data})
+        
+        files = getattr(self.request, 'FILES', None)
+        if files:
+            self.form_options.update({'files': files})
+        
         return self.form_class(**self.form_options)
     
     def get_success_url(self):
