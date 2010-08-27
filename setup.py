@@ -7,14 +7,14 @@ except IOError:
 
 setup(
     name='django-baseviews',
-    version='0.3',
+    version='0.3.1',
     description='A small collection of Django view classes to build upon.',
     long_description = long_description,
     author='Brandon Konkle',
     author_email='brandon@brandonkonkle.com',
     license='License :: OSI Approved :: BSD License',
     url='http://github.com/pegasus/django-baseviews',
-    py_modules=['baseviews'],
+    packages=['baseviews'],
     classifiers=[
         'Framework :: Django',
         'Intended Audience :: Developers',
