@@ -21,3 +21,6 @@ if settings.ROOT_URLCONF == 'example_project.urls':
             self.assertEqual(response.context['noun'], 'cheezburger')
 
             self.assertEqual(response.template.name, 'home.html')
+            
+            self.assertEqual(response['Content-Type'],
+                             settings.DEFAULT_CONTENT_TYPE)
