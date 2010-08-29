@@ -3,8 +3,7 @@ Django-Baseviews
 
 A small collection of base view classes to build upon. They are intended to
 handle a lot of the repetition in common view patterns and allow you to focus
-on what makes each view different. They were created by Brandon Konkle, and
-are used on some of the newer views at the Pegasus News and Daily You sites.
+on what makes each view different.
 
 This is just the beginning, and I plan on expanding these classes and adding
 more to cover other common view patterns.  Feel free to fork and send pull
