@@ -11,9 +11,19 @@ class BasicView(object):
     cache_key = None # Leave as none to disable context caching
     cache_time = 60*5 # 5 minutes
     
-    def __call__(self, request):
-        """Handle the request processing workflow."""
+    def __new__(cls, request, *args, **kwargs):
+        instance = object.__new__(cls)
+        if isinstance(instance, cls):
+            instance.__init__(request, *args, **kwargs)
+        return instance()
+    
+    def __init__(self, request, *args, **kwargs):
         self.request = request
+        self.args = args
+        self.kwargs = kwargs
+    
+    def __call__(self):
+        """Handle the request processing workflow."""
         return self.render()
     
     def get_cache_key(self):
@@ -60,10 +70,10 @@ class BasicView(object):
 
 class AjaxView(BasicView):
     """Returns a response containing the context serialized to Json"""
-    def __call__(self, request):
-        if not request.is_ajax():
+    def __call__(self):
+        if not self.request.is_ajax():
             raise Http404
-        return super(AjaxView, self).__call__(request)
+        return super(AjaxView, self).__call__()
     
     def render(self):
         json_data = simplejson.dumps(self.context, cls=DjangoJSONEncoder)
@@ -71,12 +81,11 @@ class AjaxView(BasicView):
 
 class FormView(BasicView):
     
-    def __call__(self, request):
-        self.request = request
+    def __call__(self):
         self.form_options = {}
         self.form = self.get_form()
         
-        if request.method == 'POST':
+        if self.request.method == 'POST':
             response = self.process_form()
             # If a response was returned by the process_form method, then
             # return that response instead of the standard response.
