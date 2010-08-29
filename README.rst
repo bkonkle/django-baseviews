@@ -40,6 +40,18 @@ method. ::
         def get_context(self):
             return {'burgers': Cheezburger.objects.i_can_has()}
 
+Custom MIME type
+----------------
+
+As with Django itself, the MIME type defaults to the value of the ``DEFAULT_CONTENT_TYPE`` setting. This can be overriden by defining the content_type attribute. ::
+    
+    from baseviews import BasicView
+    from lol.models import Cheezburger
+    
+    class GoogleSiteMap(BasicView):
+        template = 'sitemap.xml'
+        content_type = 'application.xml'
+
 Caching the Context
 -------------------
 

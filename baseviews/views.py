@@ -10,6 +10,8 @@ from django.template import RequestContext
 class BasicView(object):
     cache_key = None # Leave as none to disable context caching
     cache_time = 60*5 # 5 minutes
+    content_type = settings.DEFAULT_CONTENT_TYPE
+    file_attachment = False
     
     def __call__(self, request):
         """Handle the request processing workflow."""
@@ -56,10 +58,12 @@ class BasicView(object):
     def render(self):
         """Take the context and render it using the template."""
         return render_to_response(self.get_template(), self.context,
-                                  RequestContext(self.request))
+                                  RequestContext(self.request),
+                                  mimetype=self.content_type)
 
 class AjaxView(BasicView):
     """Returns a response containing the context serialized to Json"""
+    content_type = 'application/json'
     def __call__(self, request):
         if not request.is_ajax():
             raise Http404
@@ -67,7 +71,7 @@ class AjaxView(BasicView):
     
     def render(self):
         json_data = simplejson.dumps(self.context, cls=DjangoJSONEncoder)
-        return HttpResponse(json_data, content_type='application/json')
+        return HttpResponse(json_data, content_type=self.content_type)
 
 class FormView(BasicView):
     
