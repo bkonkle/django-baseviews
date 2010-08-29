@@ -50,7 +50,7 @@ As with Django itself, the MIME type defaults to the value of the ``DEFAULT_CONT
     
     class GoogleSiteMap(BasicView):
         template = 'sitemap.xml'
-        content_type = 'application.xml'
+        content_type = 'application/xml'
 
 Caching the Context
 -------------------
