@@ -66,9 +66,9 @@ populate by overriding the ``get_cache_key`` method::
         cache_key = 'lol_detail:%s'
         cache_time = 60*20 # 20 minutes
         
-        def __call__(self, lol_slug):
+        def __init__(self, request, lol_slug):
             self.lol = Lol.objects.get(slug=lol_slug)
-            return super(LolDetail, self).__call__()
+            super(LolDetail, self).__init__(request)
         
         def get_cache_key(self):
             return self.cache_key % self.lol.slug
@@ -120,9 +120,9 @@ If you would like to do more, you can extend the ``get_form`` and
     class KittehView(FormView):
         form_class = KittehForm
         
-        def __call__(self, kitteh_slug):
+        def __init__(self, request, kitteh_slug):
             self.kitteh = get_object_or_404(Kitteh, slug=kitteh_slug)
-            return super(KittehView, self).__call__()
+            super(KittehView, self).__init__(request)
         
         def get_form(self):
             self.form_options = {'request': self.request, 'kitteh': self.kitteh}
@@ -143,9 +143,9 @@ If you would like to do more, you can extend the ``get_form`` and
 Mapping the Views to URLs
 *************************
 
-In order to make the use of class attributes safe, views need to be mapped to
-urls using a view factory.  The one in ``baseviews`` is borrowed from
-``django-haystack``. ::
+In order to make the use of class attributes safe, baseviews overrides the
+``__new__`` method on the class.  This means that you can simply map the url
+pattern directly to the class::
 
     from lol import views
     
