@@ -6,11 +6,9 @@ if settings.ROOT_URLCONF == 'example_project.urls':
     # Only test against the example project
     
     class BaseviewTests(TestCase):
-        def setUp(self):
-            self.client = Client()
             
         def test_response(self):
-            response = self.client.get('/')
+            response = self.client.get("/lol/")
 
             self.assertEqual(response.content, 'I can haz cheezburger\n')
 
@@ -24,3 +22,16 @@ if settings.ROOT_URLCONF == 'example_project.urls':
             
             self.assertEqual(response['Content-Type'],
                              settings.DEFAULT_CONTENT_TYPE)
+
+        def test_string_in_url(self):
+            response = self.client.get("/rofl/")
+
+            self.assertEqual(response.content, 'I can haz cheezburger\n')
+
+            self.assert_('verb' in response.context)
+            self.assertEqual(response.context['verb'], 'haz')
+
+            self.assert_('noun' in response.context)
+            self.assertEqual(response.context['noun'], 'cheezburger')
+
+            self.assertEqual(response.template.name, 'home.html')
