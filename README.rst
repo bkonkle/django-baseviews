@@ -152,3 +152,18 @@ pattern directly to the class::
     urlpatterns = patterns('',
         url(r'^$', views.LolHome, name='lol_home'),
     )
+
+Backwards-Incompatible Changes
+******************************
+
+Version 0.4
+-----------
+
+* **``view_factory`` removed** - With the addition of the ``__new__`` method
+  override, the class can now used in the url mapping directly.  This
+  eliminates the need for a view factory.
+
+* **``decorate`` removed** - Jannis Leidel pointed out that Django has an
+  equivalent method decorator built in, at
+  ``django.utils.decorators.method_decorator``.  This eliminates the need for
+  a custom ``decorate`` decorator.
