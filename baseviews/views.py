@@ -74,8 +74,8 @@ class BasicView(object):
 class AjaxView(BasicView):
     """Returns a response containing the context serialized to Json"""
     content_type = 'application/json'
-	
-	def __call__(self):
+    
+    def __call__(self):
         if not self.request.is_ajax():
             raise Http404
         return super(AjaxView, self).__call__()
