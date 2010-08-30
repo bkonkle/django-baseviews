@@ -99,8 +99,9 @@ Built-in decorators such as login_required don't work by default with
 class-based views.  This is because the first argument passed to the decorator
 is the class instance, not the request object.
 
-To decorate a class-view method, simply use the helper
-``django.utils.decorators.method_decorator`` like this::
+To decorate a class-based view, simply use the helper
+``django.utils.decorators.method_decorator`` on the ``__new__`` method like
+this::
 
     from django.utils.decorators import method_decorator
     from django.contrib.auth.decorators import login_required
@@ -110,8 +111,8 @@ To decorate a class-view method, simply use the helper
         template = 'lol/wheres_mah_bucket.html'
         
         @method_decorator(login_required)
-        def __call__(self):
-            return super(BucketFinder, self).__call__()
+        def __new__(cls, *args, **kwargs):
+            return super(BucketFinder, cls).__new__(cls, *args, **kwargs)
 
 Form Views
 ----------
