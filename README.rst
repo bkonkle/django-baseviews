@@ -175,6 +175,13 @@ Version 0.4
   override, the class can now used in the url mapping directly.  This
   eliminates the need for a view factory.
 
+* **View args and kwargs handled in ``__init__``** - Previously, the view
+  arguments such as ``request`` and args and kwargs from the url pattern were
+  handled by the ``__call__`` method.  Now, they are (more appropriately)
+  handled by the ``__init__`` method and the ``__call__`` method is called
+  without any additional arguments.  You'll need to adjust your subclasses
+  accordingly.
+
 * **``decorate`` removed** - Jannis Leidel pointed out that Django has an
   equivalent method decorator built in, at
   ``django.utils.decorators.method_decorator``.  This eliminates the need for
