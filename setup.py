@@ -7,7 +7,7 @@ except IOError:
 
 setup(
     name='django-baseviews',
-    version='0.3.1',
+    version='0.4',
     description='A small collection of Django view classes to build upon.',
     long_description = long_description,
     author='Brandon Konkle',
