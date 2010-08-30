@@ -3,8 +3,7 @@ Django-Baseviews
 
 A small collection of base view classes to build upon. They are intended to
 handle a lot of the repetition in common view patterns and allow you to focus
-on what makes each view different. They were created by Brandon Konkle, and
-are used on some of the newer views at the Pegasus News and Daily You sites.
+on what makes each view different.
 
 This is just the beginning, and I plan on expanding these classes and adding
 more to cover other common view patterns.  Feel free to fork and send pull
@@ -41,6 +40,18 @@ method. ::
         def get_context(self):
             return {'burgers': Cheezburger.objects.i_can_has()}
 
+Custom MIME type
+----------------
+
+As with Django itself, the MIME type defaults to the value of the ``DEFAULT_CONTENT_TYPE`` setting. This can be overriden by defining the content_type attribute. ::
+    
+    from baseviews import BasicView
+    from lol.models import Cheezburger
+    
+    class GoogleSiteMap(BasicView):
+        template = 'sitemap.xml'
+        content_type = 'application/xml'
+
 Caching the Context
 -------------------
 
@@ -67,9 +78,9 @@ populate by overriding the ``get_cache_key`` method::
         cache_key = 'lol_detail:%s'
         cache_time = 60*20 # 20 minutes
         
-        def __call__(self, request, lol_slug):
+        def __init__(self, request, lol_slug):
             self.lol = Lol.objects.get(slug=lol_slug)
-            return super(LolDetail, self).__call__(self, request)
+            super(LolDetail, self).__init__(request)
         
         def get_cache_key(self):
             return self.cache_key % self.lol.slug
@@ -86,22 +97,22 @@ Decorators
 
 Built-in decorators such as login_required don't work by default with
 class-based views.  This is because the first argument passed to the decorator
-is the class instance, not the request object.  Todd Reed posted an excellent
-solution to this problem on
-`his blog <http://www.toddreed.name/content/django-view-class/>`__.
+is the class instance, not the request object.
 
-I've added his solution to ``baseviews`` as ``decorate``.  To decorate a
-class-view method, use ``decorate`` like this::
+To decorate a class-based view, simply use the helper
+``django.utils.decorators.method_decorator`` on the ``__new__`` method like
+this::
 
+    from django.utils.decorators import method_decorator
     from django.contrib.auth.decorators import login_required
-    from baseviews import decorate, BasicView
+    from baseviews import BasicView
     
     class BucketFinder(BasicView):
         template = 'lol/wheres_mah_bucket.html'
         
-        @decorate(login_required)
-        def __call__(self, request):
-            return super(BucketFinder, self).__call__(request)
+        @method_decorator(login_required)
+        def __new__(cls, *args, **kwargs):
+            return super(BucketFinder, cls).__new__(cls, *args, **kwargs)
 
 Form Views
 ----------
@@ -122,9 +133,9 @@ If you would like to do more, you can extend the ``get_form`` and
     class KittehView(FormView):
         form_class = KittehForm
         
-        def __call__(self, request, kitteh_slug):
+        def __init__(self, request, kitteh_slug):
             self.kitteh = get_object_or_404(Kitteh, slug=kitteh_slug)
-            return super(KittehView, self).__call__(request)
+            super(KittehView, self).__init__(request)
         
         def get_form(self):
             self.form_options = {'request': self.request, 'kitteh': self.kitteh}
@@ -145,13 +156,34 @@ If you would like to do more, you can extend the ``get_form`` and
 Mapping the Views to URLs
 *************************
 
-In order to make the use of class attributes safe, views need to be mapped to
-urls using a view factory.  The one in ``baseviews`` is borrowed from
-``django-haystack``. ::
+In order to make the use of class attributes safe, baseviews overrides the
+``__new__`` method on the class.  This means that you can simply map the url
+pattern directly to the class::
 
-    from baseviews import view_factory
     from lol import views
     
     urlpatterns = patterns('',
-        url(r'^$', view_factory(views.LolHome), name='lol_home'),
+        url(r'^$', views.LolHome, name='lol_home'),
     )
+
+Backwards-Incompatible Changes
+******************************
+
+Version 0.4
+-----------
+
+* **``view_factory`` removed** - With the addition of the ``__new__`` method
+  override, the class can now used in the url mapping directly.  This
+  eliminates the need for a view factory.
+
+* **View args and kwargs handled in ``__init__``** - Previously, the view
+  arguments such as ``request`` and args and kwargs from the url pattern were
+  handled by the ``__call__`` method.  Now, they are (more appropriately)
+  handled by the ``__init__`` method and the ``__call__`` method is called
+  without any additional arguments.  You'll need to adjust your subclasses
+  accordingly.
+
+* **``decorate`` removed** - Jannis Leidel pointed out that Django has an
+  equivalent method decorator built in, at
+  ``django.utils.decorators.method_decorator``.  This eliminates the need for
+  a custom ``decorate`` decorator.
