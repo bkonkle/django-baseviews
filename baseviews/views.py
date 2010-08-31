@@ -49,7 +49,6 @@ class BasicView(object):
             self.uncached_context()
         )
         return context_dict
-    context = property(get_context)
     
     def cached_context(self):
         """Provide the context that can be cached."""
@@ -67,7 +66,7 @@ class BasicView(object):
     
     def render(self):
         """Take the context and render it using the template."""
-        return render_to_response(self.get_template(), self.context,
+        return render_to_response(self.get_template(), self.get_context(),
                                   RequestContext(self.request),
                                   mimetype=self.content_type)
 
@@ -81,7 +80,8 @@ class AjaxView(BasicView):
         return super(AjaxView, self).__call__()
     
     def render(self):
-        json_data = simplejson.dumps(self.context, cls=DjangoJSONEncoder)
+        json_data = simplejson.dumps(self.get_context(),
+                                     cls=DjangoJSONEncoder)
         return HttpResponse(json_data, content_type=self.content_type)
 
 class FormView(BasicView):
