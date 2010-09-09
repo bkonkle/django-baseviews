@@ -1,6 +1,6 @@
 from distutils.core import setup
 
-from taggit import VERSION
+from baseviews import VERSION
 
 try:
     long_description = open('README.rst', 'rt').read()
