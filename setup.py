@@ -1,5 +1,7 @@
 from distutils.core import setup
 
+from taggit import VERSION
+
 try:
     long_description = open('README.rst', 'rt').read()
 except IOError:
@@ -7,7 +9,7 @@ except IOError:
 
 setup(
     name='django-baseviews',
-    version='0.4.1',
+    version='.'.join(map(str, VERSION)),
     description='A small collection of Django view classes to build upon.',
     long_description = long_description,
     author='Brandon Konkle',
