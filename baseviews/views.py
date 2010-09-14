@@ -86,10 +86,12 @@ class AjaxView(BasicView):
 
 class FormView(BasicView):
 
-    def __call__(self):
+    def __init__(self, request, *args, **kwargs):
+        super(FormView, self).__init__(request, *args, **kwargs)
         self.form_options = {}
         self.form = self.get_form()
 
+    def __call__(self):
         if self.request.method == 'POST':
             response = self.process_form()
             # If a response was returned by the process_form method, then
