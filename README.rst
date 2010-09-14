@@ -19,7 +19,7 @@ Use pip to install the module::
 
 Then simply import it for use in your views::
 
-    import baseviews
+    from baseviews.views import BasicView
 
 
 Writing Views
@@ -32,7 +32,7 @@ The simplest views can be handled by creating a subclass of ``BasicView``,
 defining the ``template`` attribute, and implementing the ``get_context``
 method. ::
     
-    from baseviews import BasicView
+    from baseviews.views import BasicView
     from lol.models import Cheezburger
     
     class LolHome(BasicView):
@@ -47,7 +47,7 @@ Custom MIME type
 
 As with Django itself, the MIME type defaults to the value of the ``DEFAULT_CONTENT_TYPE`` setting. This can be overriden by defining the content_type attribute. ::
     
-    from baseviews import BasicView
+    from baseviews.views import BasicView
     from lol.models import Cheezburger
     
     class GoogleSiteMap(BasicView):
@@ -110,7 +110,7 @@ this::
 
     from django.utils.decorators import method_decorator
     from django.contrib.auth.decorators import login_required
-    from baseviews import BasicView
+    from baseviews.views import BasicView
     
     class BucketFinder(BasicView):
         template = 'lol/wheres_mah_bucket.html'
@@ -208,6 +208,17 @@ pattern directly to the class::
 
 Backwards-Incompatible Changes
 ******************************
+
+Version 0.5
+-----------
+
+* **Removed the ``from views import *`` call from ``__init__``** - This was
+  there to provide backwards compatibility for when baseviews was a single
+  file instead of a package. This is not a good practice in general,
+  and it caused problems when trying to implement formal versioning. All
+  instances of ``from baseviews import`` in your code will need to be replaced
+  with ``from baseviews.views import``.
+
 
 Version 0.4
 -----------

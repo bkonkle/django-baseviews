@@ -1,6 +1,6 @@
 from distutils.core import setup
 
-import baseviews
+VERSION = __import__('baseviews').__version__
 
 try:
     long_description = open('README.rst', 'rt').read()
@@ -9,7 +9,7 @@ except IOError:
 
 setup(
     name='django-baseviews',
-    version=baseviews.get_version(),
+    version=VERSION,
     description='A small collection of Django view classes to build upon.',
     long_description = long_description,
     author='Brandon Konkle',

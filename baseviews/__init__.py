@@ -1,5 +1,3 @@
-from views import *
-
 VERSION = (0, 5, 0, "a", 1) # following PEP 386
 DEV_N = 1 # for PyPi releases, set this to None
 
