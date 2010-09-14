@@ -109,16 +109,6 @@ class FormView(BasicView):
         context.update({'form': self.form})
         return context
 
-    def process_form(self):
-        """
-        The method to process POST requests. Return an HttpResponse when you
-        need to circumvent normal view processing, such as redirecting to a
-        success url.
-        """
-        if self.form.is_valid():
-            self.form.save()
-            return HttpResponseRedirect(self.get_success_url())
-
     def get_form(self):
         """
         Get the default form for the view, bound with data if provided.
@@ -128,6 +118,16 @@ class FormView(BasicView):
         if self.files:
             self.form_options.update({'files': files})
         return self.form_class(**self.form_options)
+
+    def process_form(self):
+        """
+        The method to process POST requests. Return an HttpResponse when you
+        need to circumvent normal view processing, such as redirecting to a
+        success url.
+        """
+        if self.form.is_valid():
+            self.form.save()
+            return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
         """Get the url to redirect to upon successful form submission."""
