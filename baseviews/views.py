@@ -90,6 +90,8 @@ class FormView(BasicView):
         super(FormView, self).__init__(request, *args, **kwargs)
         self.form_options = {}
         self.form = self.get_form()
+        self.data = getattr(self.request, 'POST', None)
+        self.files = getattr(self.request, 'FILES', None)
 
     def __call__(self):
         if self.request.method == 'POST':
@@ -121,14 +123,10 @@ class FormView(BasicView):
         """
         Get the default form for the view, bound with data if provided.
         """
-        data = getattr(self.request, 'POST', None)
-        if data:
+        if self.data:
             self.form_options.update({'data': data})
-
-        files = getattr(self.request, 'FILES', None)
-        if files:
+        if self.files:
             self.form_options.update({'files': files})
-
         return self.form_class(**self.form_options)
 
     def get_success_url(self):
