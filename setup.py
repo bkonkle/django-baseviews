@@ -15,7 +15,7 @@ setup(
     author='Brandon Konkle',
     author_email='brandon@brandonkonkle.com',
     license='License :: OSI Approved :: BSD License',
-    url='http://github.com/pegasus/django-baseviews',
+    url='http://github.com/bkonkle/django-baseviews',
     packages=['baseviews'],
     classifiers=[
         'Framework :: Django',
