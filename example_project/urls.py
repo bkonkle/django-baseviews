@@ -1,9 +1,7 @@
 from django.conf.urls.defaults import *
-from baseviews import BasicView
 
-from example_project.views import LolHome
+from example_project.views import LolHomeView
 
 urlpatterns = patterns('',
-    url(r'^lol/$', LolHome),
-    url(r'^rofl/$', "example_project.views.RoflHome"),
+    url(r'^lol/$', LolHomeView),
 )
