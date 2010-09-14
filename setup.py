@@ -1,5 +1,7 @@
 from distutils.core import setup
 
+VERSION = __import__('baseviews').__version__
+
 try:
     long_description = open('README.rst', 'rt').read()
 except IOError:
@@ -7,13 +9,13 @@ except IOError:
 
 setup(
     name='django-baseviews',
-    version='0.4.1',
+    version=VERSION,
     description='A small collection of Django view classes to build upon.',
     long_description = long_description,
     author='Brandon Konkle',
     author_email='brandon@brandonkonkle.com',
     license='License :: OSI Approved :: BSD License',
-    url='http://github.com/pegasus/django-baseviews',
+    url='http://github.com/bkonkle/django-baseviews',
     packages=['baseviews'],
     classifiers=[
         'Framework :: Django',

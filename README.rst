@@ -9,6 +9,7 @@ This is just the beginning, and I plan on expanding these classes and adding
 more to cover other common view patterns.  Feel free to fork and send pull
 requests - I'd be happy to review and integrate contributions.
 
+
 Installation
 ************
 
@@ -18,7 +19,8 @@ Use pip to install the module::
 
 Then simply import it for use in your views::
 
-    import baseviews
+    from baseviews.views import BasicView
+
 
 Writing Views
 *************
@@ -26,12 +28,11 @@ Writing Views
 Basic Views
 -----------
 
-
 The simplest views can be handled by creating a subclass of ``BasicView``,
 defining the ``template`` attribute, and implementing the ``get_context``
 method. ::
     
-    from baseviews import BasicView
+    from baseviews.views import BasicView
     from lol.models import Cheezburger
     
     class LolHome(BasicView):
@@ -40,17 +41,19 @@ method. ::
         def get_context(self):
             return {'burgers': Cheezburger.objects.i_can_has()}
 
+
 Custom MIME type
 ----------------
 
 As with Django itself, the MIME type defaults to the value of the ``DEFAULT_CONTENT_TYPE`` setting. This can be overriden by defining the content_type attribute. ::
     
-    from baseviews import BasicView
+    from baseviews.views import BasicView
     from lol.models import Cheezburger
     
     class GoogleSiteMap(BasicView):
         template = 'sitemap.xml'
         content_type = 'application/xml'
+
 
 Caching the Context
 -------------------
@@ -85,12 +88,14 @@ populate by overriding the ``get_cache_key`` method::
         def get_cache_key(self):
             return self.cache_key % self.lol.slug
 
+
 Ajax Views
 ----------
 
 The ``AjaxView`` class is a subclass of ``BasicView`` that takes the context
 and uses simplejson to dump it to a JSON object.  If the view is not requested
 via Ajax, it raises an Http404 exception.
+
 
 Decorators
 ----------
@@ -105,7 +110,7 @@ this::
 
     from django.utils.decorators import method_decorator
     from django.contrib.auth.decorators import login_required
-    from baseviews import BasicView
+    from baseviews.views import BasicView
     
     class BucketFinder(BasicView):
         template = 'lol/wheres_mah_bucket.html'
@@ -113,6 +118,7 @@ this::
         @method_decorator(login_required)
         def __new__(cls, *args, **kwargs):
             return super(BucketFinder, cls).__new__(cls, *args, **kwargs)
+
 
 Form Views
 ----------
@@ -131,6 +137,7 @@ If you would like to do more, you can extend the ``get_form`` and
 ``process_form`` methods::
 
     class KittehView(FormView):
+        template = 'lol/kitteh.html'
         form_class = KittehForm
         
         def __init__(self, request, kitteh_slug):
@@ -138,7 +145,8 @@ If you would like to do more, you can extend the ``get_form`` and
             super(KittehView, self).__init__(request)
         
         def get_form(self):
-            self.form_options = {'request': self.request, 'kitteh': self.kitteh}
+            self.form_options = {'request': self.request,
+                                 'kitteh': self.kitteh}
             return super(KittehView, self).get_form()
         
         def process_form(self):
@@ -153,6 +161,37 @@ If you would like to do more, you can extend the ``get_form`` and
         def get_success_url(self):
             return reverse('kitteh_edited', args=[self.kitteh.slug])
 
+
+Views with Multiple Forms
+-------------------------
+
+If you need multiple forms in one view, use MultiFormView.  This is a subclass
+of FormView that allows you to provide ``form_classes`` dict as an attribute
+on the class, mapping form names to form classes.  The form names will be
+used as the keys to form instances, and each form name will be turned into
+a context variable providing the form instances to your template.
+
+::
+
+    class MonorailCatTicketsView(MultiFormView):
+        template = 'lol/monorail_tickets.html'
+        form_classes = {'kitteh_form': KittehForm,
+                        'payment_form': PaymentForm}
+        
+        def __init__(self, request, kitteh_slug):
+            self.kitteh = get_object_or_404(Kitteh, slug=kitteh_slug)
+            super(MonorailCatTicketsView, self).__init__(request)
+        
+        def get_form(self):
+            self.form_options['kitteh_form'] = {'request': self.request,
+                                                'kitteh': self.kitteh}
+            self.form_options['payment_form'] = {'user': self.request.user}
+            return super(MonorailCatTicketsView, self).get_form()
+        
+        def get_success_url(self):
+            return reverse('monorail_cat_thanks_you', args=[self.kitteh.slug])
+
+
 Mapping the Views to URLs
 *************************
 
@@ -166,8 +205,20 @@ pattern directly to the class::
         url(r'^$', views.LolHome, name='lol_home'),
     )
 
+
 Backwards-Incompatible Changes
 ******************************
+
+Version 0.5
+-----------
+
+* **Removed the ``from views import *`` call from ``__init__``** - This was
+  there to provide backwards compatibility for when baseviews was a single
+  file instead of a package. This is not a good practice in general,
+  and it caused problems when trying to implement formal versioning. All
+  instances of ``from baseviews import`` in your code will need to be replaced
+  with ``from baseviews.views import``.
+
 
 Version 0.4
 -----------
