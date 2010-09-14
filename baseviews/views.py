@@ -132,3 +132,42 @@ class FormView(BasicView):
     def get_success_url(self):
         """Get the url to redirect to upon successful form submission."""
         return self.success_url
+
+
+class MultiFormView(FormView):
+
+    def __init__(self, request, *args, **kwargs):
+        self.forms = {}
+        super(MultiFormView, self).__init__(request, *args, **kwargs)
+
+    def get_form(self):
+        """
+        Set self.forms to a dict of form_class keys to form instances, and
+        return None for the value of self.form.
+        """
+        for form_name, form_class in self.form_classes.items():
+            if self.data:
+                self.form_options[form_name].update({'data': data})
+            if self.files:
+                self.form_options[form_name].update({'files': files})
+            self.forms[form_name] = \
+                form_class(**self.form_options[form_name])
+        return None
+
+    def process_form(self):
+        for form_name in self.form_classes.keys():
+            if not self.forms[form_name].is_valid():
+                # Return none so that the normal view processing will
+                # continue, allowing the user to correct errors.
+                return None
+
+        # If all forms are valid, save them and redirect.
+        for form_name in self.form_classes.keys():
+            self.forms[form_name].save()
+        return HttpResponseRedirect(self.get_success_url())
+
+    def uncached_context(self):
+        context = super(MultiFormView, self).uncached_context()
+        for form_name in self.form_classes.keys():
+            context.update({form_name: self.forms[form_name]})
+        return context
