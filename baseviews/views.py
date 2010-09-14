@@ -88,10 +88,10 @@ class FormView(BasicView):
 
     def __init__(self, request, *args, **kwargs):
         super(FormView, self).__init__(request, *args, **kwargs)
-        self.form_options = {}
-        self.form = self.get_form()
         self.data = getattr(self.request, 'POST', None)
         self.files = getattr(self.request, 'FILES', None)
+        self.form_options = {}
+        self.form = self.get_form()
 
     def __call__(self):
         if self.request.method == 'POST':
@@ -114,9 +114,9 @@ class FormView(BasicView):
         Get the default form for the view, bound with data if provided.
         """
         if self.data:
-            self.form_options.update({'data': data})
+            self.form_options.update({'data': self.data})
         if self.files:
-            self.form_options.update({'files': files})
+            self.form_options.update({'files': self.files})
         return self.form_class(**self.form_options)
 
     def process_form(self):
@@ -147,9 +147,9 @@ class MultiFormView(FormView):
         """
         for form_name, form_class in self.form_classes.items():
             if self.data:
-                self.form_options[form_name].update({'data': data})
+                self.form_options[form_name].update({'data': self.data})
             if self.files:
-                self.form_options[form_name].update({'files': files})
+                self.form_options[form_name].update({'files': self.files})
             self.forms[form_name] = \
                 form_class(**self.form_options[form_name])
         return None
