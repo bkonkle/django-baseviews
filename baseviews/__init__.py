@@ -1,5 +1,5 @@
 VERSION = (0, 5, 0, "b", 1) # following PEP 386
-DEV_N = True # for PyPi releases, set this to None
+DEV_N = 1 # for PyPi releases, set this to None
 
 
 def get_version():
