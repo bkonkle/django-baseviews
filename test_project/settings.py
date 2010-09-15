@@ -74,7 +74,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
 )
 
-ROOT_URLCONF = 'example_project.urls'
+ROOT_URLCONF = 'test_project.urls'
 
 TEMPLATE_DIRS = (
     os.path.join(BASE, 'templates'),

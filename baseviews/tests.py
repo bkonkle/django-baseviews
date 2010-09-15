@@ -2,7 +2,7 @@ from django.conf import settings
 from django.test import TestCase, Client
 
 
-if settings.ROOT_URLCONF == 'example_project.urls':
+if settings.ROOT_URLCONF == 'test_project.urls':
     # Only test against the example project
     
     class BaseviewTests(TestCase):
