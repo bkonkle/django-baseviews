@@ -146,6 +146,8 @@ class MultiFormView(FormView):
         return None for the value of self.form.
         """
         for form_name, form_class in self.form_classes.items():
+            if not self.form_options.get(form_name):
+                self.form_options[form_name] = {}
             if self.data:
                 self.form_options[form_name].update({'data': self.data})
             if self.files:

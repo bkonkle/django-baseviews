@@ -45,7 +45,8 @@ method. ::
 Custom MIME type
 ----------------
 
-As with Django itself, the MIME type defaults to the value of the ``DEFAULT_CONTENT_TYPE`` setting. This can be overriden by defining the content_type attribute. ::
+The MIME type defaults to the value of the ``DEFAULT_CONTENT_TYPE`` setting.
+This can be overriden by defining the content_type attribute::
     
     from baseviews.views import BasicView
     from lol.models import Cheezburger
