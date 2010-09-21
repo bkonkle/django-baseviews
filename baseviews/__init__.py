@@ -2,8 +2,10 @@ VERSION = (0, 5, 0, "a", 3) # following PEP 386
 DEV_N = 1 # for PyPi releases, set this to None
 
 
-def get_version():
+def get_version(short=False):
     version = "%s.%s" % (VERSION[0], VERSION[1])
+    if short:
+        return version
     if VERSION[2]:
         version = "%s.%s" % (version, VERSION[2])
     if VERSION[3] != "f":
