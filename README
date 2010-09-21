@@ -8,3 +8,6 @@ on what makes each view different.
 This is just the beginning, and I plan on expanding these classes and adding
 more to cover other common view patterns.  Feel free to fork and send pull
 requests - I'd be happy to review and integrate contributions.
+
+You can review the documentation on Read the Docs:
+http://readthedocs.org/projects/bkonkle/django-baseviews/docs/
