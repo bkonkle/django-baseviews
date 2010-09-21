@@ -1,5 +1,3 @@
-.. _writing_views:
-
 Writing Views
 =============
 

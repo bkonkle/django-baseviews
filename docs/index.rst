@@ -10,6 +10,11 @@ Contents:
 
 .. toctree::
    :maxdepth: 2
+   
+   installation
+   writing_views
+   views_reference
+   backwards_incompatible
 
 Indices and tables
 ==================

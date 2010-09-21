@@ -1,5 +1,3 @@
-.. _backwards_incompatible:
-
 Backwards-Incompatible Changes
 ==============================
 
