@@ -11,7 +11,6 @@ class BasicView(object):
     cache_key = None # Leave as none to disable context caching
     cache_time = 60*5 # 5 minutes
     content_type = settings.DEFAULT_CONTENT_TYPE
-    file_attachment = False
 
     def __new__(cls, request, *args, **kwargs):
         instance = object.__new__(cls)
