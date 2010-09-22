@@ -95,3 +95,45 @@ AjaxView
     .. method:: render()
     
         Uses simplejson to render the context as a JSON object.
+
+
+FormView
+********
+
+.. class:: FormView
+    
+    A subclass of :class:`BasicView` that includes a form in the context and
+    then attempts to process the form if data was provided via POST.
+    
+    .. attribute:: form_class
+        
+        This is the class of the form that will be instantiated by the view.
+    
+    .. attribute:: success_url
+    
+        The url that the user will be redirected to after a successful form
+        submission.
+    
+    .. method:: uncached_context()
+        
+        Adds the form instance to the uncached context.
+        
+    .. method:: get_form()
+    
+        If POST data or uploaded files are included in the request, they are
+        added to the ``form_options`` dict before the ``form_class`` is
+        instantiated.
+        
+    .. method:: process_form()
+    
+        If the form is valid, this method saves it and then returns a redirect
+        to the ``success_url``.  Otherwise, it returns ``None``, which causes
+        the ``__call__`` method to call ``render`` as usual.  Data will still
+        be bound to the form after an unsuccessful attempt to process, which
+        allows you to show the error messages in your template.
+        
+    .. method:: get_success_url()
+    
+        By default, it just returs the ``success_url`` attribute.  It can be
+        overridden in your subclass to dynamically determine the url based on
+        the request.
