@@ -137,3 +137,15 @@ FormView
         By default, it just returs the ``success_url`` attribute.  It can be
         overridden in your subclass to dynamically determine the url based on
         the request.
+
+MultiFormView
+*************
+
+.. class:: MultiFormView
+
+    A subclass of :class:`MultiFormView` to handle the processing of more than
+    one form.
+    
+    .. attribute:: form_classes
+    
+        A dict of form names to form classes to be used for the view.
