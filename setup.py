@@ -3,7 +3,7 @@ from distutils.core import setup
 VERSION = __import__('baseviews').__version__
 
 try:
-    long_description = open('README.rst', 'rt').read()
+    long_description = open('README', 'rt').read()
 except IOError:
     long_description = ''
 

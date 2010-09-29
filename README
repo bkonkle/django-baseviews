@@ -1,0 +1,15 @@
+Django-Baseviews
+================
+
+A small collection of base view classes to build upon. They are intended to
+handle a lot of the repetition in common view patterns and allow you to focus
+on what makes each view different.  They've been in use in production on
+various PegasusNews.com apps since June, 2010.
+
+This is just the beginning, and I plan on expanding these classes and adding
+more to cover other common view patterns.  Feel free to fork and send pull
+requests - I'd be happy to review and integrate contributions.
+
+You can review the documentation on Read the Docs:
+
+http://readthedocs.org/projects/bkonkle/django-baseviews/docs/

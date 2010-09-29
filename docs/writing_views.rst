@@ -1,32 +1,8 @@
-Django-Baseviews
-================
-
-A small collection of base view classes to build upon. They are intended to
-handle a lot of the repetition in common view patterns and allow you to focus
-on what makes each view different.
-
-This is just the beginning, and I plan on expanding these classes and adding
-more to cover other common view patterns.  Feel free to fork and send pull
-requests - I'd be happy to review and integrate contributions.
-
-
-Installation
-************
-
-Use pip to install the module::
-
-    $ pip install django-baseviews
-
-Then simply import it for use in your views::
-
-    from baseviews.views import BasicView
-
-
 Writing Views
-*************
+=============
 
 Basic Views
------------
+***********
 
 The simplest views can be handled by creating a subclass of ``BasicView``,
 defining the ``template`` attribute, and implementing the ``get_context``
@@ -43,7 +19,7 @@ method. ::
 
 
 Custom MIME type
-----------------
+****************
 
 The MIME type defaults to the value of the ``DEFAULT_CONTENT_TYPE`` setting.
 This can be overriden by defining the content_type attribute::
@@ -57,7 +33,7 @@ This can be overriden by defining the content_type attribute::
 
 
 Caching the Context
--------------------
+*******************
 
 If you'd like to cache the context through the low-level cache API, add the
 ``cache_key`` and ``cache_time`` attributes and override the
@@ -91,7 +67,7 @@ populate by overriding the ``get_cache_key`` method::
 
 
 Ajax Views
-----------
+**********
 
 The ``AjaxView`` class is a subclass of ``BasicView`` that takes the context
 and uses simplejson to dump it to a JSON object.  If the view is not requested
@@ -99,7 +75,7 @@ via Ajax, it raises an Http404 exception.
 
 
 Decorators
-----------
+**********
 
 Built-in decorators such as login_required don't work by default with
 class-based views.  This is because the first argument passed to the decorator
@@ -122,7 +98,7 @@ this::
 
 
 Form Views
-----------
+**********
 
 Form processing can be simplified with a subclass of the ``FormView`` class.
 Define an extra attribute called ``form_class`` and set it to the form you'd
@@ -164,7 +140,7 @@ If you would like to do more, you can extend the ``get_form`` and
 
 
 Views with Multiple Forms
--------------------------
+*************************
 
 If you need multiple forms in one view, use MultiFormView.  This is a subclass
 of FormView that allows you to provide ``form_classes`` dict as an attribute
@@ -205,37 +181,3 @@ pattern directly to the class::
     urlpatterns = patterns('',
         url(r'^$', views.LolHome, name='lol_home'),
     )
-
-
-Backwards-Incompatible Changes
-******************************
-
-Version 0.5
------------
-
-* **Removed the ``from views import *`` call from ``__init__``** - This was
-  there to provide backwards compatibility for when baseviews was a single
-  file instead of a package. This is not a good practice in general,
-  and it caused problems when trying to implement formal versioning. All
-  instances of ``from baseviews import`` in your code will need to be replaced
-  with ``from baseviews.views import``.
-
-
-Version 0.4
------------
-
-* **``view_factory`` removed** - With the addition of the ``__new__`` method
-  override, the class can now used in the url mapping directly.  This
-  eliminates the need for a view factory.
-
-* **View args and kwargs handled in ``__init__``** - Previously, the view
-  arguments such as ``request`` and args and kwargs from the url pattern were
-  handled by the ``__call__`` method.  Now, they are (more appropriately)
-  handled by the ``__init__`` method and the ``__call__`` method is called
-  without any additional arguments.  You'll need to adjust your subclasses
-  accordingly.
-
-* **``decorate`` removed** - Jannis Leidel pointed out that Django has an
-  equivalent method decorator built in, at
-  ``django.utils.decorators.method_decorator``.  This eliminates the need for
-  a custom ``decorate`` decorator.
