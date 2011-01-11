@@ -12,6 +12,10 @@
 # serve to show the default.
 
 import sys, os
+
+DOCS_BASE = os.path.dirname(__file__)
+sys.path.insert(0, os.path.abspath(os.path.join(DOCS_BASE, '..')))
+
 import baseviews
 
 # If extensions (or modules to document with autodoc) are in another directory,
